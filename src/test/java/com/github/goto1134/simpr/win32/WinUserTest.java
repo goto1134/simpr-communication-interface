@@ -1,11 +1,12 @@
-package com.github.goto1134.simpr;
+package com.github.goto1134.simpr.win32;
 
+import com.github.goto1134.simpr.win32.WinUser;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.EnumSet;
 
-import static com.github.goto1134.simpr.MessageBoxFlags.ICON_ASTERISK;
+import static com.github.goto1134.simpr.win32.MessageBoxFlags.ICON_ASTERISK;
 
 /**
  * Created by Andrew

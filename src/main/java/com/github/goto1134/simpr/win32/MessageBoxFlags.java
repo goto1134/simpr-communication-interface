@@ -1,4 +1,4 @@
-package com.github.goto1134.simpr;
+package com.github.goto1134.simpr.win32;
 
 /**
  * Created by Andrew

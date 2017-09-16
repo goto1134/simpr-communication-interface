@@ -1,5 +1,6 @@
-package com.github.goto1134.simpr;
+package com.github.goto1134.simpr.win32;
 
+import com.github.goto1134.simpr.win32.*;
 import jnr.ffi.LibraryLoader;
 import jnr.ffi.Runtime;
 import org.junit.Before;
