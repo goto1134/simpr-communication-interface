@@ -6,7 +6,7 @@ import jnr.ffi.util.EnumMapper.IntegerEnum;
  * Created by Andrew
  * on 17.09.2017.
  */
-enum WindowsSystemError
+public enum WindowsSystemError
         implements IntegerEnum {
     FACILITY_WINDOWSUPDATE(36),
     FACILITY_WINDOWS_CE(24),

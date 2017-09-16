@@ -5,7 +5,7 @@ import jnr.ffi.util.EnumMapper;
 /**
  * Class styles
  */
-enum ClassStyle
+public enum ClassStyle
         implements EnumMapper.IntegerEnum {
 
     VREDRAW(0x0001),
