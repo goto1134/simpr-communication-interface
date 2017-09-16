@@ -4,12 +4,15 @@ import jnr.ffi.Memory;
 import jnr.ffi.NativeType;
 import jnr.ffi.Pointer;
 import jnr.ffi.Runtime;
+import jnr.ffi.annotations.SaveError;
 
 /**
  * Created by Andrew
  * on 14.09.2017.
  */
-interface WinUser {
+@SaveError
+@SuppressWarnings({"DeprecatedIsStillUsed", "deprecation"})
+public interface WinUser {
 
     default Win32WindowHandle CreateWindow(String lpClassName,
                                            String lpWindowName,
@@ -22,70 +25,15 @@ interface WinUser {
                                            Win32MenuHandle hMenu,
                                            Win32InstanceHandle hInstance,
                                            Pointer lpParam) {
-        return CreateWindowExW(ExtendedWindowStyle.RIGHTSCROLLBAR, lpClassName, lpWindowName, dwStyle, x, y, nWidth,
-                               nHeight, hWndParent, hMenu, hInstance, lpParam);
+        return CreateWindowEx(ExtendedWindowStyle.RIGHTSCROLLBAR, lpClassName, lpWindowName, dwStyle, x, y, nWidth,
+                              nHeight, hWndParent, hMenu, hInstance, lpParam);
     }
-
-    Win32WindowHandle CreateWindowExW(ExtendedWindowStyle dwExStyle,
-                                      String lpClassName,
-                                      String lpWindowName,
-                                      int dwStyle,
-                                      short x,
-                                      short y,
-                                      short nWidth,
-                                      short nHeight,
-                                      Win32WindowHandle hWndParent,
-                                      Win32MenuHandle hMenu,
-                                      Win32InstanceHandle hInstance,
-                                      Pointer lpParam);
-
-    default Win32WindowHandle CreateWindowW(String lpClassName,
-                                            String lpWindowName,
-                                            int dwStyle,
-                                            short x,
-                                            short y,
-                                            short nWidth,
-                                            short nHeight,
-                                            Win32WindowHandle hWndParent,
-                                            Win32MenuHandle hMenu,
-                                            Win32InstanceHandle hInstance,
-                                            Pointer lpParam) {
-        return CreateWindowExW(ExtendedWindowStyle.RIGHTSCROLLBAR, lpClassName, lpWindowName, dwStyle, x, y, nWidth,
-                               nHeight, hWndParent, hMenu, hInstance, lpParam);
-    }
-
-    default Win32WindowHandle CreateWindowA(String lpClassName,
-                                            String lpWindowName,
-                                            int dwStyle,
-                                            short x,
-                                            short y,
-                                            short nWidth,
-                                            short nHeight,
-                                            Win32WindowHandle hWndParent,
-                                            Win32MenuHandle hMenu,
-                                            Win32InstanceHandle hInstance,
-                                            Pointer lpParam) {
-        return CreateWindowExA(ExtendedWindowStyle.RIGHTSCROLLBAR, lpClassName, lpWindowName, dwStyle, x, y, nWidth,
-                               nHeight, hWndParent, hMenu, hInstance, lpParam);
-    }
-
-    Win32WindowHandle CreateWindowExA(ExtendedWindowStyle dwExStyle,
-                                      String lpClassName,
-                                      String lpWindowName,
-                                      int dwStyle,
-                                      short x,
-                                      short y,
-                                      short nWidth,
-                                      short nHeight,
-                                      Win32WindowHandle hWndParent,
-                                      Win32MenuHandle hMenu,
-                                      Win32InstanceHandle hInstance,
-                                      Pointer lpParam);
 
     /**
      * @param dwExStyle    The extended window style of the window being created. For a list of possible values,see
      *                     {@link ExtendedWindowStyle}
-     * @param lpClassName  A null-terminated string or a class atom created by a previous call to the RegisterClass
+     * @param lpClassName  A null-terminated string or a class atom created by a previous call to the
+     *                     {@link #RegisterClass(WNDCLASS)}
      *                     or RegisterClassEx function. The atom must be in the low-order word of lpClassName; the
      *                     high-order word must be zero. If lpClassName is a string, it specifies the window class
      *                     name. The class name can be any name registered with RegisterClass or RegisterClassEx,
@@ -125,13 +73,89 @@ interface WinUser {
                                                            nHeight, hWndParent, hMenu, hInstance, lpParam);
     }
 
-    default short RegisterClass() {
-        return Win32Encoding.isUnicode() ? RegisterClassW() : RegisterClassA();
+    @Deprecated
+    Win32WindowHandle CreateWindowExW(ExtendedWindowStyle dwExStyle,
+                                      String lpClassName,
+                                      String lpWindowName,
+                                      int dwStyle,
+                                      short x,
+                                      short y,
+                                      short nWidth,
+                                      short nHeight,
+                                      Win32WindowHandle hWndParent,
+                                      Win32MenuHandle hMenu,
+                                      Win32InstanceHandle hInstance,
+                                      Pointer lpParam);
+
+    @Deprecated
+    Win32WindowHandle CreateWindowExA(ExtendedWindowStyle dwExStyle,
+                                      String lpClassName,
+                                      String lpWindowName,
+                                      int dwStyle,
+                                      short x,
+                                      short y,
+                                      short nWidth,
+                                      short nHeight,
+                                      Win32WindowHandle hWndParent,
+                                      Win32MenuHandle hMenu,
+                                      Win32InstanceHandle hInstance,
+                                      Pointer lpParam);
+
+    @Deprecated
+    default Win32WindowHandle CreateWindowW(String lpClassName,
+                                            String lpWindowName,
+                                            int dwStyle,
+                                            short x,
+                                            short y,
+                                            short nWidth,
+                                            short nHeight,
+                                            Win32WindowHandle hWndParent,
+                                            Win32MenuHandle hMenu,
+                                            Win32InstanceHandle hInstance,
+                                            Pointer lpParam) {
+        return CreateWindowExW(ExtendedWindowStyle.RIGHTSCROLLBAR, lpClassName, lpWindowName, dwStyle, x, y, nWidth,
+                               nHeight, hWndParent, hMenu, hInstance, lpParam);
     }
 
-    short RegisterClassW();
+    @Deprecated
+    default Win32WindowHandle CreateWindowA(String lpClassName,
+                                            String lpWindowName,
+                                            int dwStyle,
+                                            short x,
+                                            short y,
+                                            short nWidth,
+                                            short nHeight,
+                                            Win32WindowHandle hWndParent,
+                                            Win32MenuHandle hMenu,
+                                            Win32InstanceHandle hInstance,
+                                            Pointer lpParam) {
+        return CreateWindowExA(ExtendedWindowStyle.RIGHTSCROLLBAR, lpClassName, lpWindowName, dwStyle, x, y, nWidth,
+                               nHeight, hWndParent, hMenu, hInstance, lpParam);
+    }
 
-    short RegisterClassA();
+    /**
+     * @param lpWndClass A pointer to a WNDCLASS structure. You must fill the structure with the appropriate class
+     *                   attributes before passing it to the function.
+     * @return If the function succeeds, the return value is a class atom that uniquely identifies the class being
+     * registered. This atom can only be used by the CreateWindow, CreateWindowEx, GetClassInfo, GetClassInfoEx,
+     * FindWindow, FindWindowEx, and UnregisterClass functions and the IActiveIMMap::FilterClientWindows method.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    default short RegisterClass(WNDCLASS lpWndClass)
+            throws Win32Exception {
+        short result = Win32Encoding.isUnicode() ? RegisterClassW(lpWndClass) : RegisterClassA(lpWndClass);
+        if (result == 0) {
+            throw new Win32Exception("Error occurred " + WinBase.getInstance()
+                                                                .GetLastError());
+        }
+        return result;
+    }
+
+    @Deprecated
+    short RegisterClassW(WNDCLASS lpWndClass);
+
+    @Deprecated
+    short RegisterClassA(WNDCLASS lpWndClass);
 
     /**
      * @param lpPrevWndFunc The previous window procedure. If this value is obtained by calling the GetWindowLong
@@ -146,7 +170,7 @@ interface WinUser {
      *                      value of the Msg parameter.
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
-    default long CallWindowProc(WNDPROC lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, long wParam, long lParam) {
+    default long CallWindowProc(WindowProcessorCallback lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, long wParam, long lParam) {
         Pointer wParamWrap = Memory.allocate(Runtime.getSystemRuntime(), NativeType.ULONG);
         wParamWrap.putNativeLong(0, wParam);
         Pointer lParamWrap = Memory.allocate(Runtime.getSystemRuntime(), NativeType.ULONG);
@@ -169,7 +193,8 @@ interface WinUser {
      *                      value of the Msg parameter.
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
-    default Pointer CallWindowProc(WNDPROC lpPrevWndFunc,
+    @Deprecated
+    default Pointer CallWindowProc(WindowProcessorCallback lpPrevWndFunc,
                                    Win32WindowHandle hWnd,
                                    int Msg,
                                    Pointer wParam,
@@ -191,7 +216,8 @@ interface WinUser {
      *                      value of the Msg parameter.
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
-    Pointer CallWindowProcW(WNDPROC lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, Pointer wParam, Pointer lParam);
+    @Deprecated
+    Pointer CallWindowProcW(WindowProcessorCallback lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, Pointer wParam, Pointer lParam);
 
     /**
      * @param lpPrevWndFunc The previous window procedure. If this value is obtained by calling the GetWindowLong
@@ -206,7 +232,8 @@ interface WinUser {
      *                      value of the Msg parameter.
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
-    Pointer CallWindowProcA(WNDPROC lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, Pointer wParam, Pointer lParam);
+    @Deprecated
+    Pointer CallWindowProcA(WindowProcessorCallback lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, Pointer wParam, Pointer lParam);
 
 }
 

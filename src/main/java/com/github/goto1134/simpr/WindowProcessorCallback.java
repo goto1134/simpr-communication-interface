@@ -8,7 +8,7 @@ import jnr.ffi.annotations.Delegate;
  * Created by Andrew
  * on 14.09.2017.
  */
-public interface WNDPROC {
+public interface WindowProcessorCallback {
     /**
      * @param hwnd   A handle to the window
      * @param uMsg   The message.
