@@ -6,6 +6,8 @@ import jnr.ffi.Runtime;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.EnumSet;
+
 /**
  * Created by Andrew
  * on 16.09.2017.
@@ -27,12 +29,17 @@ public class SimpleWindowTest {
             throws Exception {
         WindowProcessorCallback wndproc = new WindowProcessorCallback() {
             @Override
-            public long WindowProc(Pointer hwnd, int uMsg, long wParam, long lParam) {
-                System.out.println("Received something");
+            public long WindowProc(Pointer windowHandle, int message, long wParam, long lParam) {
+                System.out.println("Received something" + message);
                 return 0;
             }
         };
-        WNDCLASS wndclass = new WNDCLASS(Runtime.getRuntime(winUser), wndproc, "ХаюХай");
+        String myClass = "MyClass";
+        WNDCLASS wndclass = new WNDCLASS(Runtime.getRuntime(winUser), wndproc, myClass);
         winUser.RegisterClass(wndclass);
+        Win32WindowHandle window =
+                winUser.CreateWindow(myClass, "window", EnumSet.noneOf(WindowStyle.class), null, null,
+                                     WinBase.getInstance()
+                                            .getProgramInstanceHandle(), null);
     }
 }

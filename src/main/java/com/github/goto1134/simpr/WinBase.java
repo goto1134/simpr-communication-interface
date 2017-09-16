@@ -19,6 +19,10 @@ public interface WinBase {
 
     int GetLastError();
 
+    default Win32InstanceHandle getProgramInstanceHandle() {
+        return new Win32InstanceHandle(getProgramHandle());
+    }
+
     default Pointer getProgramHandle() {
         return Win32Encoding.isUnicode() ? GetModuleHandleW(ZERO) : GetModuleHandleA(ZERO);
     }
