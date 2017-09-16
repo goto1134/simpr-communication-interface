@@ -1,10 +1,9 @@
 package com.github.goto1134.simpr;
 
-import jnr.ffi.Memory;
-import jnr.ffi.NativeType;
-import jnr.ffi.Pointer;
+import jnr.ffi.*;
 import jnr.ffi.Runtime;
 import jnr.ffi.annotations.SaveError;
+import jnr.ffi.types.u_int32_t;
 
 /**
  * Created by Andrew
@@ -13,6 +12,9 @@ import jnr.ffi.annotations.SaveError;
 @SaveError
 @SuppressWarnings({"DeprecatedIsStillUsed", "deprecation"})
 public interface WinUser {
+    static WinUser getInstance() {
+        return WinUserHolder.instance;
+    }
 
     default Win32WindowHandle CreateWindow(String lpClassName,
                                            String lpWindowName,
@@ -170,7 +172,11 @@ public interface WinUser {
      *                      value of the Msg parameter.
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
-    default long CallWindowProc(WindowProcessorCallback lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, long wParam, long lParam) {
+    default long CallWindowProc(WindowProcessorCallback lpPrevWndFunc,
+                                Win32WindowHandle hWnd,
+                                int Msg,
+                                long wParam,
+                                long lParam) {
         Pointer wParamWrap = Memory.allocate(Runtime.getSystemRuntime(), NativeType.ULONG);
         wParamWrap.putNativeLong(0, wParam);
         Pointer lParamWrap = Memory.allocate(Runtime.getSystemRuntime(), NativeType.ULONG);
@@ -217,7 +223,11 @@ public interface WinUser {
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
     @Deprecated
-    Pointer CallWindowProcW(WindowProcessorCallback lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, Pointer wParam, Pointer lParam);
+    Pointer CallWindowProcW(WindowProcessorCallback lpPrevWndFunc,
+                            Win32WindowHandle hWnd,
+                            int Msg,
+                            Pointer wParam,
+                            Pointer lParam);
 
     /**
      * @param lpPrevWndFunc The previous window procedure. If this value is obtained by calling the GetWindowLong
@@ -233,7 +243,83 @@ public interface WinUser {
      * @return The return value specifies the result of the message processing and depends on the message sent.
      */
     @Deprecated
-    Pointer CallWindowProcA(WindowProcessorCallback lpPrevWndFunc, Win32WindowHandle hWnd, int Msg, Pointer wParam, Pointer lParam);
+    Pointer CallWindowProcA(WindowProcessorCallback lpPrevWndFunc,
+                            Win32WindowHandle hWnd,
+                            int Msg,
+                            Pointer wParam,
+                            Pointer lParam);
 
+
+    /**
+     * @param message The message to be displayed. If the string consists of more than one line, you can separate
+     *                the lines using a carriage return and/or linefeed character between each line.
+     * @param title   The dialog box title. If this parameter is NULL, the default title is Error.
+     * @param uType   The contents and behavior of the dialog box. This parameter can be a combination of flags
+     *                from the following groups of flags.
+     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
+     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    default int showMessage(String message, String title, @u_int32_t long uType)
+            throws Win32Exception {return showMessage(null, message, title, uType);}
+
+    /**
+     * @param hWnd    A handle to the owner window of the message box to be created. If this parameter is NULL, the
+     *                message box has no owner window.
+     * @param message The message to be displayed. If the string consists of more than one line, you can separate
+     *                the lines using a carriage return and/or linefeed character between each line.
+     * @param title   The dialog box title. If this parameter is NULL, the default title is Error.
+     * @param uType   The contents and behavior of the dialog box. This parameter can be a combination of flags
+     *                from the following groups of flags.
+     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
+     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    default int showMessage(Win32WindowHandle hWnd, String message, String title, @u_int32_t long uType) {
+        int result = Win32Encoding.isUnicode() ? MessageBoxW(hWnd, message, title, uType)
+                                               : MessageBoxA(hWnd, message, title, uType);
+        if (result == 0) {
+            throw new Win32Exception("MessageBox display error " + WinBase.getInstance()
+                                                                          .GetLastError());
+        }
+        return result;
+    }
+
+    /**
+     * @param hWnd      A handle to the owner window of the message box to be created. If this parameter is NULL, the
+     *                  message box has no owner window.
+     * @param lpText    The message to be displayed. If the string consists of more than one line, you can separate
+     *                  the lines using a carriage return and/or linefeed character between each line.
+     * @param lpCaption The dialog box title. If this parameter is NULL, the default title is Error.
+     * @param uType     The contents and behavior of the dialog box. This parameter can be a combination of flags
+     *                  from the following groups of flags.
+     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
+     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    @Deprecated
+    int MessageBoxW(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t long uType);
+
+    /**
+     * @param hWnd      A handle to the owner window of the message box to be created. If this parameter is NULL, the
+     *                  message box has no owner window.
+     * @param lpText    The message to be displayed. If the string consists of more than one line, you can separate
+     *                  the lines using a carriage return and/or linefeed character between each line.
+     * @param lpCaption The dialog box title. If this parameter is NULL, the default title is Error.
+     * @param uType     The contents and behavior of the dialog box. This parameter can be a combination of flags
+     *                  from the following groups of flags.
+     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
+     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    @Deprecated
+    int MessageBoxA(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t long uType);
+
+    class WinUserHolder {
+        private static final WinUser instance = LibraryLoader.create(WinUser.class)
+                                                             .failImmediately()
+                                                             .library("user32")
+                                                             .load();
+    }
 }
 

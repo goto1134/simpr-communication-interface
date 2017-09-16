@@ -5,6 +5,6 @@ package com.github.goto1134.simpr;
  * on 16.09.2017.
  */
 public class Win32Exception
-        extends Exception {
+        extends RuntimeException {
     public Win32Exception(String message) {super(message);}
 }
