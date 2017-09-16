@@ -5,6 +5,8 @@ import jnr.ffi.Runtime;
 import jnr.ffi.annotations.SaveError;
 import jnr.ffi.types.u_int32_t;
 
+import java.util.Set;
+
 /**
  * Created by Andrew
  * on 14.09.2017.
@@ -260,7 +262,7 @@ public interface WinUser {
      * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
      * If the function fails, the return value is zero. To get extended error information, call GetLastError.
      */
-    default int showMessage(String message, String title, @u_int32_t long uType)
+    default int showMessage(String message, String title, @u_int32_t Set<MessageBoxFlags> uType)
             throws Win32Exception {return showMessage(null, message, title, uType);}
 
     /**
@@ -275,7 +277,7 @@ public interface WinUser {
      * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
      * If the function fails, the return value is zero. To get extended error information, call GetLastError.
      */
-    default int showMessage(Win32WindowHandle hWnd, String message, String title, @u_int32_t long uType) {
+    default int showMessage(Win32WindowHandle hWnd, String message, String title, @u_int32_t Set<MessageBoxFlags> uType) {
         int result = Win32Encoding.isUnicode() ? MessageBoxW(hWnd, message, title, uType)
                                                : MessageBoxA(hWnd, message, title, uType);
         if (result == 0) {
@@ -298,7 +300,7 @@ public interface WinUser {
      * If the function fails, the return value is zero. To get extended error information, call GetLastError.
      */
     @Deprecated
-    int MessageBoxW(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t long uType);
+    int MessageBoxW(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t Set<MessageBoxFlags> uType);
 
     /**
      * @param hWnd      A handle to the owner window of the message box to be created. If this parameter is NULL, the
@@ -313,7 +315,7 @@ public interface WinUser {
      * If the function fails, the return value is zero. To get extended error information, call GetLastError.
      */
     @Deprecated
-    int MessageBoxA(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t long uType);
+    int MessageBoxA(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t Set<MessageBoxFlags> uType);
 
     class WinUserHolder {
         private static final WinUser instance = LibraryLoader.create(WinUser.class)
