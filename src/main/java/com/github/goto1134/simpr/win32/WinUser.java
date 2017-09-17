@@ -406,6 +406,38 @@ public interface WinUser {
     @Deprecated
     int MessageBoxA(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t Set<MessageBoxFlags> uType);
 
+    /**
+     * @param message The message to be registered.
+     * @return if the message is successfully registered, the return value is a message identifier in the range 0xC000
+     * through 0xFFFF.
+     */
+    default int RegisterWindowMessage(String message) {
+        int result = Win32Encoding.isUnicode() ? RegisterWindowMessageW(message) : RegisterWindowMessageA(message);
+        if (result == 0) {
+            throw new Win32Exception("Could not register message " + message + " with error " + WinBase.getInstance()
+                                                                                                       .GetLastError());
+        }
+        return result;
+    }
+
+    /**
+     * @param message The message to be registered.
+     * @return if the message is successfully registered, the return value is a message identifier in the range 0xC000
+     * through 0xFFFF.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    @Deprecated
+    int RegisterWindowMessageW(String message);
+
+    /**
+     * @param message The message to be registered.
+     * @return if the message is successfully registered, the return value is a message identifier in the range 0xC000
+     * through 0xFFFF.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    @Deprecated
+    int RegisterWindowMessageA(String message);
+
     class WinUserHolder {
         private static final WinUser instance = LibraryLoader.create(WinUser.class)
                                                              .failImmediately()
