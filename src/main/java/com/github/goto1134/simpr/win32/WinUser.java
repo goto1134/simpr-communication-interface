@@ -337,6 +337,19 @@ public interface WinUser {
                             Pointer wParam,
                             Pointer lParam);
 
+    default Pointer DefWindowProc(@In Win32WindowHandle hWnd, @In int Msg,
+                                  @In Pointer wParam,
+                                  @In Pointer lParam) {
+
+        return Win32Encoding.isUnicode() ? DefWindowProcW(hWnd, Msg, wParam, lParam)
+                                         : DefWindowProcA(hWnd, Msg, wParam, lParam);
+    }
+
+    @Deprecated
+    Pointer DefWindowProcW(@In Win32WindowHandle hWnd, @In int Msg, @In Pointer wParam, @In Pointer lParam);
+
+    @Deprecated
+    Pointer DefWindowProcA(@In Win32WindowHandle hWnd, @In int Msg, @In Pointer wParam, @In Pointer lParam);
 
     /**
      * @param message The message to be displayed. If the string consists of more than one line, you can separate
@@ -437,6 +450,7 @@ public interface WinUser {
      */
     @Deprecated
     int RegisterWindowMessageA(String message);
+
 
     class WinUserHolder {
         private static final WinUser instance = LibraryLoader.create(WinUser.class)
