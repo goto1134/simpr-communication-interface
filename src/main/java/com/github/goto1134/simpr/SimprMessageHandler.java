@@ -12,8 +12,6 @@ import java.util.EnumSet;
  */
 public class SimprMessageHandler
         implements WindowProcessorCallback {
-
-    public static final int END_STATE_REACHED = 65537;
     public static final String SIMPR_CLIENT_WINDOW = "simprClientWindow";
     private final SimprClient simprListener;
     private final WinUser winUserLib = WinUser.getInstance();
@@ -34,13 +32,13 @@ public class SimprMessageHandler
             return winUserLib.DefWindowProc(new Win32WindowHandle(windowHandle), message, wParam, lParam);
         } else {
             long wParamValue = wParam.address();
-            if (wParamValue == END_STATE_REACHED) {
-                simprListener.onEndStateReached();
+            boolean isCondition = wParamValue / 65536 == 0;
+            int tableIndex = (int) (wParamValue - (isCondition ? 0 : 65536));
+            if (lParam == null) {
+                simprListener.onEndStateReached(tableIndex);
                 return Pointer.wrap(Runtime.getSystemRuntime(), 1);
             } else {
                 long lParamValue = lParam.address();
-                boolean isCondition = wParamValue / 65536 == 0;
-                int tableIndex = (int) (wParamValue - (isCondition ? 0 : 65536));
                 int result = isCondition ? simprListener.getConditionValue(tableIndex, (int) lParamValue) ? 1 : 0
                         : simprListener.performEvent(tableIndex, (int) lParamValue) ? 1 : 0;
 

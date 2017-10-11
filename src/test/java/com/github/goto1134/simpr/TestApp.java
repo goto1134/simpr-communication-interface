@@ -46,8 +46,8 @@ public class TestApp
     }
 
     @Override
-    public void onEndStateReached() {
-        Alert alert = new Alert(INFORMATION, "End state reached");
+    public void onEndStateReached(int tableIndex) {
+        Alert alert = new Alert(INFORMATION, "End state reached in table " + tableIndex);
         alert.show();
     }
 

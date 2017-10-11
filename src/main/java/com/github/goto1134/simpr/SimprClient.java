@@ -25,6 +25,8 @@ public interface SimprClient {
 
     /**
      * Fires when end state is reached by SIMPR program
+     *
+     * @param tableIndex index of table in which the end state is reached
      */
-    void onEndStateReached();
+    void onEndStateReached(int tableIndex);
 }
