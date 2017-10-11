@@ -12,7 +12,7 @@ import javafx.stage.Stage;
  */
 public class ExampleApp
         extends Application
-        implements SimprListener {
+        implements SimprClient {
 
 
     private SimprMessageHandler smartHouse;
@@ -26,8 +26,7 @@ public class ExampleApp
         btn.setOnAction(event -> System.out.println("Hello World!"));
 
         StackPane root = new StackPane();
-        root.getChildren()
-            .add(btn);
+        root.getChildren().add(btn);
 
         Scene scene = new Scene(root, 300, 250);
 
@@ -37,14 +36,14 @@ public class ExampleApp
     }
 
     @Override
-    public int getConditionValue(int tableIndex, int conditionIndex) {
+    public boolean getConditionValue(int tableIndex, int conditionIndex) {
         System.out.println("condition " + tableIndex + " " + conditionIndex);
-        return 0;
+        return false;
     }
 
     @Override
-    public int performEvent(int tableIndex, int event) {
+    public boolean performEvent(int tableIndex, int event) {
         System.out.println("event " + tableIndex + " " + event);
-        return 0;
+        return true;
     }
 }

@@ -13,17 +13,16 @@ import java.util.EnumSet;
 public class SimprMessageHandler
         implements WindowProcessorCallback {
     public static final String SIMPR_CLIENT_WINDOW = "simprClientWindow";
-    private final SimprListener simprListener;
+    private final SimprClient simprListener;
     private final WinUser winUserLib = WinUser.getInstance();
     private final int messageCode;
     private final Win32WindowHandle window;
 
-    public SimprMessageHandler(String message, String windowName, SimprListener simprListener) {
+    public SimprMessageHandler(String message, String windowName, SimprClient simprListener) {
         this.simprListener = simprListener;
         winUserLib.RegisterClass(new WNDCLASS(Runtime.getRuntime(winUserLib), this, SIMPR_CLIENT_WINDOW));
         window = winUserLib.CreateWindow(SIMPR_CLIENT_WINDOW, windowName, EnumSet.noneOf(WindowStyle.class), null, null,
-                                         WinBase.getInstance()
-                                                .getProgramInstanceHandle(), null);
+                WinBase.getInstance().getProgramInstanceHandle(), null);
         messageCode = winUserLib.RegisterWindowMessage(message);
     }
 
@@ -36,8 +35,8 @@ public class SimprMessageHandler
             long lParamValue = lParam.address();
             boolean isCondition = wParamValue / 65536 == 0;
             int tableIndex = (int) (wParamValue - (isCondition ? 0 : 65536));
-            int result = isCondition ? simprListener.getConditionValue(tableIndex, (int) lParamValue)
-                                     : simprListener.performEvent(tableIndex, (int) lParamValue);
+            int result = isCondition ? simprListener.getConditionValue(tableIndex, (int) lParamValue) ? 1 : 0
+                                     : simprListener.performEvent(tableIndex, (int) lParamValue) ? 1 : 0;
             return Pointer.wrap(Runtime.getSystemRuntime(), result);
         }
     }
