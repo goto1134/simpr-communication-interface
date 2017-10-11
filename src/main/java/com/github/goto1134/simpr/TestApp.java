@@ -2,15 +2,21 @@ package com.github.goto1134.simpr;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.util.Optional;
+
+import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 /**
  * Created by Andrew
  * on 17.09.2017.
  */
-public class ExampleApp
+public class TestApp
         extends Application
         implements SimprClient {
 
@@ -21,29 +27,31 @@ public class ExampleApp
     public void start(Stage primaryStage)
             throws Exception {
         smartHouse = new SimprMessageHandler("SmartHouse", "Smart House Simulator", this);
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(event -> System.out.println("Hello World!"));
 
         StackPane root = new StackPane();
-        root.getChildren().add(btn);
-
         Scene scene = new Scene(root, 300, 250);
-
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Simpr Test Application");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     @Override
     public boolean getConditionValue(int tableIndex, int conditionIndex) {
-        System.out.println("condition " + tableIndex + " " + conditionIndex);
-        return false;
+        Alert alert = new Alert(CONFIRMATION, "Is condition " + tableIndex + " " + conditionIndex + " true?", ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Checking condition");
+        Optional<ButtonType> buttonType = alert.showAndWait();
+        return buttonType.get() == ButtonType.YES;
+    }
+
+    @Override
+    public void onEndStateReached() {
+        Alert alert = new Alert(INFORMATION, "End state reached");
+        alert.show();
     }
 
     @Override
     public boolean performEvent(int tableIndex, int event) {
-        System.out.println("event " + tableIndex + " " + event);
+        System.out.println("event " + tableIndex + " " + event + " occured");
         return true;
     }
 }

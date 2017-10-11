@@ -22,4 +22,9 @@ interface SimprClient {
      * @return is execution performed successfully
      */
     boolean performEvent(int tableIndex, int event);
+
+    /**
+     * Fires when end state is reached by SIMPR program
+     */
+    void onEndStateReached();
 }
