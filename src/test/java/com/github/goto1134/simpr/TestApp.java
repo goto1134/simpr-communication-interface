@@ -1,5 +1,7 @@
 package com.github.goto1134.simpr;
 
+import com.github.goto1134.simpr.SimprClient;
+import com.github.goto1134.simpr.SimprMessageHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;

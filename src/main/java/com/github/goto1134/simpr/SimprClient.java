@@ -3,7 +3,7 @@ package com.github.goto1134.simpr;
 /**
  * SIMPR Win32 message listener
  */
-interface SimprClient {
+public interface SimprClient {
 
     /**
      * Requests condition value

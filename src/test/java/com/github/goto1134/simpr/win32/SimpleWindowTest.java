@@ -2,6 +2,7 @@ package com.github.goto1134.simpr.win32;
 
 import com.github.goto1134.simpr.win32.*;
 import jnr.ffi.LibraryLoader;
+import jnr.ffi.Pointer;
 import jnr.ffi.Runtime;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,9 +20,9 @@ public class SimpleWindowTest {
     public void setUp()
             throws Exception {
         winUser = LibraryLoader.create(WinUser.class)
-                               .failImmediately()
-                               .library("user32")
-                               .load();
+                .failImmediately()
+                .library("user32")
+                .load();
     }
 
     @Test
@@ -29,14 +30,14 @@ public class SimpleWindowTest {
             throws Exception {
         WindowProcessorCallback wndproc = (windowHandle, message, wParam, lParam) -> {
             System.out.println("Received something" + message);
-            return 0;
+            return Pointer.wrap(Runtime.getSystemRuntime(), 0);
         };
         String myClass = "MyClass";
         WNDCLASS wndclass = new WNDCLASS(Runtime.getRuntime(winUser), wndproc, myClass);
         winUser.RegisterClass(wndclass);
         Win32WindowHandle window =
                 winUser.CreateWindow(myClass, "window", EnumSet.noneOf(WindowStyle.class), null, null,
-                                     WinBase.getInstance()
-                                            .getProgramInstanceHandle(), null);
+                        WinBase.getInstance()
+                                .getProgramInstanceHandle(), null);
     }
 }
