@@ -28,7 +28,7 @@ public interface WinUser {
 
     /**
      * @param className      A null-terminated string or a class atom created by a previous call to the
-     *                       {@link #RegisterClass} or {@link #RegisterClassEx} function. The atom must be in the
+     *                       {@link #RegisterClass} or RegisterClassEx function. The atom must be in the
      *                       low-order word of ClassName; the
      *                       high-order word must be zero. If ClassName is a string, it specifies the window class
      *                       name. The class name can be any name registered with RegisterClass or RegisterClassEx,
@@ -62,7 +62,7 @@ public interface WinUser {
 
     /**
      * @param className      A null-terminated string or a class atom created by a previous call to the
-     *                       {@link #RegisterClass} or {@link #RegisterClassEx} function. The atom must be in the
+     *                       {@link #RegisterClass} or RegisterClassEx function. The atom must be in the
      *                       low-order word of ClassName; the
      *                       high-order word must be zero. If ClassName is a string, it specifies the window class
      *                       name. The class name can be any name registered with RegisterClass or RegisterClassEx,
@@ -350,74 +350,6 @@ public interface WinUser {
 
     @Deprecated
     Pointer DefWindowProcA(@In Win32WindowHandle hWnd, @In int Msg, @In Pointer wParam, @In Pointer lParam);
-
-    /**
-     * @param message The message to be displayed. If the string consists of more than one line, you can separate
-     *                the lines using a carriage return and/or linefeed character between each line.
-     * @param title   The dialog box title. If this parameter is NULL, the default title is Error.
-     * @param uType   The contents and behavior of the dialog box. This parameter can be a combination of flags
-     *                from the following groups of flags.
-     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
-     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
-     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
-     */
-    default int showMessage(String message, String title, @u_int32_t Set<MessageBoxFlags> uType)
-            throws Win32Exception {return showMessage(null, message, title, uType);}
-
-    /**
-     * @param hWnd    A handle to the owner window of the message box to be created. If this parameter is NULL, the
-     *                message box has no owner window.
-     * @param message The message to be displayed. If the string consists of more than one line, you can separate
-     *                the lines using a carriage return and/or linefeed character between each line.
-     * @param title   The dialog box title. If this parameter is NULL, the default title is Error.
-     * @param uType   The contents and behavior of the dialog box. This parameter can be a combination of flags
-     *                from the following groups of flags.
-     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
-     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
-     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
-     */
-    default int showMessage(Win32WindowHandle hWnd,
-                            String message,
-                            String title,
-                            @u_int32_t Set<MessageBoxFlags> uType) {
-        int result = Win32Encoding.isUnicode() ? MessageBoxW(hWnd, message, title, uType)
-                                               : MessageBoxA(hWnd, message, title, uType);
-        if (result == 0) {
-            throw new Win32Exception("MessageBox display error " + WinBase.getInstance()
-                                                                          .GetLastError());
-        }
-        return result;
-    }
-
-    /**
-     * @param hWnd      A handle to the owner window of the message box to be created. If this parameter is NULL, the
-     *                  message box has no owner window.
-     * @param lpText    The message to be displayed. If the string consists of more than one line, you can separate
-     *                  the lines using a carriage return and/or linefeed character between each line.
-     * @param lpCaption The dialog box title. If this parameter is NULL, the default title is Error.
-     * @param uType     The contents and behavior of the dialog box. This parameter can be a combination of flags
-     *                  from the following groups of flags.
-     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
-     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
-     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
-     */
-    @Deprecated
-    int MessageBoxW(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t Set<MessageBoxFlags> uType);
-
-    /**
-     * @param hWnd      A handle to the owner window of the message box to be created. If this parameter is NULL, the
-     *                  message box has no owner window.
-     * @param lpText    The message to be displayed. If the string consists of more than one line, you can separate
-     *                  the lines using a carriage return and/or linefeed character between each line.
-     * @param lpCaption The dialog box title. If this parameter is NULL, the default title is Error.
-     * @param uType     The contents and behavior of the dialog box. This parameter can be a combination of flags
-     *                  from the following groups of flags.
-     * @return If a message box has a Cancel button, the function returns the IDCANCEL value if either the ESC key is
-     * pressed or the Cancel button is selected. If the message box has no Cancel button, pressing ESC has no effect.
-     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
-     */
-    @Deprecated
-    int MessageBoxA(Win32WindowHandle hWnd, String lpText, String lpCaption, @u_int32_t Set<MessageBoxFlags> uType);
 
     /**
      * @param message The message to be registered.

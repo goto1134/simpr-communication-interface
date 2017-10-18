@@ -7,8 +7,7 @@ import jnr.ffi.Runtime;
 import java.util.EnumSet;
 
 /**
- * Created by Andrew
- * on 17.09.2017.
+ * Registers a win32 window and processes messages from SIMPR program
  */
 public class SimprMessageHandler
         implements WindowProcessorCallback {
@@ -40,7 +39,7 @@ public class SimprMessageHandler
             } else {
                 long lParamValue = lParam.address();
                 int result = isCondition ? simprListener.getConditionValue(tableIndex, (int) lParamValue) ? 1 : 0
-                        : simprListener.performEvent(tableIndex, (int) lParamValue) ? 1 : 0;
+                                         : simprListener.performEvent(tableIndex, (int) lParamValue) ? 1 : 0;
 
                 return Pointer.wrap(Runtime.getSystemRuntime(), result);
             }
