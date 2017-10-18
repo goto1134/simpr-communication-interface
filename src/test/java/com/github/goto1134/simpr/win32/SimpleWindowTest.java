@@ -1,13 +1,16 @@
 package com.github.goto1134.simpr.win32;
 
-import com.github.goto1134.simpr.win32.*;
 import jnr.ffi.LibraryLoader;
+import jnr.ffi.Platform;
 import jnr.ffi.Pointer;
 import jnr.ffi.Runtime;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.EnumSet;
+
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Created by Andrew
@@ -19,15 +22,17 @@ public class SimpleWindowTest {
     @Before
     public void setUp()
             throws Exception {
+        Assume.assumeThat(Platform.getNativePlatform().getOS(), equalTo(Platform.OS.WINDOWS));
         winUser = LibraryLoader.create(WinUser.class)
-                .failImmediately()
-                .library("user32")
-                .load();
+                               .failImmediately()
+                               .library("user32")
+                               .load();
     }
 
     @Test
     public void name()
             throws Exception {
+
         WindowProcessorCallback wndproc = (windowHandle, message, wParam, lParam) -> {
             System.out.println("Received something" + message);
             return Pointer.wrap(Runtime.getSystemRuntime(), 0);
@@ -37,7 +42,6 @@ public class SimpleWindowTest {
         winUser.RegisterClass(wndclass);
         Win32WindowHandle window =
                 winUser.CreateWindow(myClass, "window", EnumSet.noneOf(WindowStyle.class), null, null,
-                        WinBase.getInstance()
-                                .getProgramInstanceHandle(), null);
+                                     WinBase.getInstance().getProgramInstanceHandle(), null);
     }
 }
