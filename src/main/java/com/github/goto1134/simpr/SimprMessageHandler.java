@@ -12,13 +12,18 @@ import java.util.EnumSet;
 public class SimprMessageHandler
         implements WindowProcessorCallback {
     public static final String SIMPR_CLIENT_WINDOW = "simprClientWindow";
-    private final SimprClient simprListener;
+    private final SimprClient simprClient;
     private final WinUser winUserLib = WinUser.getInstance();
     private final int messageCode;
     private final Win32WindowHandle window;
 
-    public SimprMessageHandler(String message, String windowName, SimprClient simprListener) {
-        this.simprListener = simprListener;
+    /**
+     * @param message     Message code will be registered for this window to exchange data with SIMPR
+     * @param windowName  Name that will be associated with this window
+     * @param simprClient User-defined client for SIMPR simulation
+     */
+    public SimprMessageHandler(String message, String windowName, SimprClient simprClient) {
+        this.simprClient = simprClient;
         winUserLib.RegisterClass(new WNDCLASS(Runtime.getRuntime(winUserLib), this, SIMPR_CLIENT_WINDOW));
         window = winUserLib.CreateWindow(SIMPR_CLIENT_WINDOW, windowName, EnumSet.noneOf(WindowStyle.class), null, null,
                 WinBase.getInstance().getProgramInstanceHandle(), null);
@@ -34,12 +39,12 @@ public class SimprMessageHandler
             boolean isCondition = wParamValue / 65536 == 0;
             int tableIndex = (int) (wParamValue - (isCondition ? 0 : 65536));
             if (lParam == null) {
-                simprListener.onEndStateReached(tableIndex);
+                simprClient.onEndStateReached(tableIndex);
                 return Pointer.wrap(Runtime.getSystemRuntime(), 1);
             } else {
                 long lParamValue = lParam.address();
-                int result = isCondition ? simprListener.getConditionValue(tableIndex, (int) lParamValue) ? 1 : 0
-                                         : simprListener.performEvent(tableIndex, (int) lParamValue) ? 1 : 0;
+                int result = isCondition ? simprClient.getConditionValue(tableIndex, (int) lParamValue) ? 1 : 0
+                                         : simprClient.performEvent(tableIndex, (int) lParamValue) ? 1 : 0;
 
                 return Pointer.wrap(Runtime.getSystemRuntime(), result);
             }
